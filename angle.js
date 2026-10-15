@@ -3,7 +3,7 @@ const r = require("raylib");
 function teardown() { r.CloseWindow(); }
 
 function calculatePoint3(point1, point2) {
-  const x = point2.x;
+  const x = (point1.x > point2.x) ? 2 * point1.x - point2.x : point2.x;
   const y = point1.y;
 
   return { x, y };
@@ -11,7 +11,7 @@ function calculatePoint3(point1, point2) {
 
 function init() {
   const point1 = { x: 100, y: 300 };
-  const point2 = { x: 450, y: 150 };
+  const point2 = { x: 40, y: 150 };
 
   const point3 = calculatePoint3(point1, point2);
 
@@ -51,7 +51,9 @@ function calculateAngle(world) {
   const oppLength = getOppLength(world);
   const lineLength = getLineLength(world);
 
-  const angle = Math.trunc(toDegrees(Math.asin(oppLength / lineLength)));
+  const tempAngle = Math.trunc(toDegrees(Math.asin(oppLength / lineLength)));
+  const angle = (world.point1.x > world.point2.x) ? 180 - tempAngle : tempAngle;
+
   return angle;
 }
 
@@ -66,7 +68,13 @@ function drawLines(world) {
 } */
 
 function writeAngle(world) {
-  r.DrawText(`${world.angle}°`, world.point1.x, world.point1.y, 20, r.WHITE);
+  r.DrawText(`Angle at point ${(world.point1.x > world.point2.x) ? 'c' : 'a'}: ${world.angle}°`, 50, 50, 20, r.WHITE);
+}
+
+function writePointNames(world) {
+  r.DrawText("a", world.point1.x + 10, world.point1.y - 10, 15, r.WHITE);
+  r.DrawText("b", world.point2.x + 10, world.point2.y - 10, 15, r.WHITE);
+  r.DrawText("c", world.point3.x + 10, world.point3.y - 10, 15, r.WHITE);
 }
 
 function draw(world) {
@@ -79,6 +87,7 @@ function draw(world) {
   // drawAngleArc(world);
 
   writeAngle(world);
+  writePointNames(world);
 
   r.EndDrawing();
 }
